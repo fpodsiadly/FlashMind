@@ -26,7 +26,7 @@ type QuizStore = {
 };
 
 export const useQuizStore = create<QuizStore>((set, get) => ({
-  language: "en",
+  language: "pl",
   status: "idle",
   roundDuration: 75,
   questions: [],

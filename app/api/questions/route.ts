@@ -11,11 +11,20 @@ async function translateQuestion(question: QuizQuestion, lang: Language): Promis
   }
 
   const translatedQuestion = await translateText(question.question, lang);
+  const translatedCategory = await translateText(question.category, lang);
   const translatedOptions = await Promise.all(question.options.map((option) => translateText(option, lang)));
   const correctIndex = question.options.findIndex((option) => option === question.correctAnswer);
 
+  const difficultyMap: Record<QuizQuestion["difficulty"], QuizQuestion["difficulty"]> = {
+    easy: "easy",
+    medium: "medium",
+    hard: "hard",
+  };
+
   return {
     ...question,
+    category: translatedCategory,
+    difficulty: difficultyMap[question.difficulty],
     question: translatedQuestion,
     options: translatedOptions,
     correctAnswer: translatedOptions[correctIndex] ?? translatedOptions[0],
@@ -24,7 +33,7 @@ async function translateQuestion(question: QuizQuestion, lang: Language): Promis
 
 export async function GET(request: NextRequest) {
   try {
-    const lang = (request.nextUrl.searchParams.get("lang") ?? "en") as Language;
+    const lang = (request.nextUrl.searchParams.get("lang") ?? "pl") as Language;
     const allQuestions = await fetchTriviaQuestions();
     const selected = pickAdaptiveQuestions(allQuestions, new Set<string>(), 20);
 

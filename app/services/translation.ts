@@ -22,7 +22,7 @@ function mockTranslate(text: string): string {
     .map((part) => quickDictionary[part.toLowerCase()] ?? part)
     .join("");
 
-  return translated === text ? `PL: ${text}` : translated;
+  return translated;
 }
 
 async function openAiTranslate(text: string): Promise<string> {

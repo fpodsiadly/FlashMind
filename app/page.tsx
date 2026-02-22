@@ -33,6 +33,27 @@ export default function HomePage() {
         roundDuration,
     } = useQuizStore();
 
+    const t =
+        language === "pl"
+            ? {
+                subtitle: "Prosty quiz • 20 pytań • neonowy ciemny motyw",
+                ready: "Gotowy na prostą rundę 20 pytań?",
+                loading: "Ładowanie...",
+                start: "Rozpocznij quiz",
+                score: "Wynik",
+                finishRound: "Zakończ rundę",
+                nextQuestion: "Następne pytanie",
+            }
+            : {
+                subtitle: "Simple quiz • 20 questions • neon dark mode",
+                ready: "Ready for a simple 20-question round?",
+                loading: "Loading...",
+                start: "Start Quiz",
+                score: "Score",
+                finishRound: "Finish Round",
+                nextQuestion: "Next Question",
+            };
+
     const startMutation = useMutation({ mutationFn: fetchQuestions });
 
     const question = questions[currentIndex];
@@ -62,23 +83,30 @@ export default function HomePage() {
         nextQuestion();
     };
 
+    const handleLanguageChange = (nextLanguage: "en" | "pl") => {
+        setLanguage(nextLanguage);
+        if (status !== "idle") {
+            resetRound();
+        }
+    };
+
     return (
         <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6">
             <header className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h1 className="text-4xl font-black neon-title">FlashMind</h1>
-                    <p className="text-sm text-indigo-200">Simple quiz • 20 questions • neon dark mode</p>
+                    <p className="text-sm text-indigo-200">{t.subtitle}</p>
                 </div>
-                <LanguageToggle value={language} onChange={setLanguage} />
+                <LanguageToggle value={language} onChange={handleLanguageChange} />
             </header>
 
             <div className="space-y-4">
                 {status === "idle" && (
                     <Card>
                         <CardContent className="space-y-4 p-6">
-                            <p className="text-indigo-100">Ready for a simple 20-question round?</p>
+                            <p className="text-indigo-100">{t.ready}</p>
                             <Button className="w-full sm:w-auto" size="lg" onClick={handleStart} disabled={startMutation.isPending}>
-                                {startMutation.isPending ? "Loading..." : "Start Quiz"}
+                                {startMutation.isPending ? t.loading : t.start}
                             </Button>
                         </CardContent>
                     </Card>
@@ -89,7 +117,7 @@ export default function HomePage() {
                         <Card>
                             <CardContent className="grid gap-3 p-5 sm:grid-cols-1">
                                 <div>
-                                    <p className="text-xs uppercase text-indigo-200">Score</p>
+                                    <p className="text-xs uppercase text-indigo-200">{t.score}</p>
                                     <p className="text-2xl font-bold">{score}</p>
                                 </div>
                             </CardContent>
@@ -100,6 +128,7 @@ export default function HomePage() {
                         <AnimatePresence mode="wait">
                             <QuestionCard
                                 key={question.id}
+                                language={language}
                                 question={question}
                                 selectedAnswer={selectedAnswer}
                                 answered={answered}
@@ -111,7 +140,7 @@ export default function HomePage() {
 
                         {answered && (
                             <Button className="w-full" size="lg" onClick={handleContinue}>
-                                {currentIndex >= questions.length - 1 ? "Finish Round" : "Next Question"}
+                                {currentIndex >= questions.length - 1 ? t.finishRound : t.nextQuestion}
                             </Button>
                         )}
                     </>
@@ -119,6 +148,7 @@ export default function HomePage() {
 
                 {status === "finished" && (
                     <ResultsCard
+                        language={language}
                         score={score}
                         correctCount={answers.filter((item) => item.isCorrect).length}
                         incorrectCount={answers.filter((item) => !item.isCorrect).length}

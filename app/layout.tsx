@@ -5,7 +5,7 @@ import { Providers } from "@/app/components/providers";
 
 export const metadata: Metadata = {
     title: "FlashMind",
-    description: "Adaptive quiz training with EN/PL support",
+    description: "Prosty quiz wiedzy po polsku",
     manifest: "/manifest.webmanifest",
 };
 
@@ -15,7 +15,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="pl" suppressHydrationWarning>
             <body>
                 <Providers>{children}</Providers>
             </body>

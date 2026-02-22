@@ -7,7 +7,14 @@ import { Card, CardContent, CardHeader } from "@/app/components/ui/card";
 import { QuizQuestion } from "@/app/utils/types";
 import { cn } from "@/app/utils/cn";
 
+const difficultyLabel: Record<QuizQuestion["difficulty"], string> = {
+    easy: "łatwy",
+    medium: "średni",
+    hard: "trudny",
+};
+
 export function QuestionCard({
+    language,
     question,
     selectedAnswer,
     answered,
@@ -15,6 +22,7 @@ export function QuestionCard({
     index,
     total,
 }: {
+    language: "en" | "pl";
     question: QuizQuestion;
     selectedAnswer: string | null;
     answered: boolean;
@@ -22,13 +30,18 @@ export function QuestionCard({
     index: number;
     total: number;
 }) {
+    const currentDifficultyLabel =
+        language === "pl"
+            ? difficultyLabel[question.difficulty]
+            : question.difficulty;
+
     return (
         <motion.div key={question.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
             <Card>
                 <CardHeader className="space-y-3">
                     <div className="flex flex-wrap items-center gap-2">
                         <Badge>{question.category}</Badge>
-                        <Badge className="capitalize">{question.difficulty}</Badge>
+                        <Badge className="capitalize">{currentDifficultyLabel}</Badge>
                         <Badge>
                             {index + 1}/{total}
                         </Badge>
