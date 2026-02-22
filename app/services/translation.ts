@@ -1,5 +1,4 @@
 import crypto from "node:crypto";
-import { prisma } from "@/lib/prisma";
 import { Language } from "@/app/utils/types";
 
 const quickDictionary: Record<string, string> = {
@@ -14,6 +13,8 @@ const quickDictionary: Record<string, string> = {
 function hashText(text: string) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
+
+const translationCache = new Map<string, string>();
 
 function mockTranslate(text: string): string {
   const translated = text
@@ -66,29 +67,16 @@ export async function translateText(text: string, targetLanguage: Language): Pro
   }
 
   const sourceHash = hashText(text);
-  const cached = await prisma.translationCache.findUnique({
-    where: {
-      sourceHash_targetLang: {
-        sourceHash,
-        targetLang: targetLanguage,
-      },
-    },
-  });
+  const cacheKey = `${sourceHash}:${targetLanguage}`;
+  const cached = translationCache.get(cacheKey);
 
   if (cached) {
-    return cached.translatedText;
+    return cached;
   }
 
   const translatedText = await openAiTranslate(text);
 
-  await prisma.translationCache.create({
-    data: {
-      sourceHash,
-      sourceText: text,
-      targetLang: targetLanguage,
-      translatedText,
-    },
-  });
+  translationCache.set(cacheKey, translatedText);
 
   return translatedText;
 }

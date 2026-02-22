@@ -12,10 +12,6 @@ type QuizStore = {
   questions: QuizQuestion[];
   currentIndex: number;
   score: number;
-  streak: number;
-  bestStreak: number;
-  multiplier: number;
-  bestMultiplier: number;
   answers: QuestionAnswer[];
   selectedAnswer: string | null;
   answered: boolean;
@@ -29,11 +25,6 @@ type QuizStore = {
   resetRound: () => void;
 };
 
-const calculateMultiplier = (streak: number) => {
-  const levels = Math.floor(streak / 3);
-  return Math.min(1 + levels * 0.25, 3);
-};
-
 export const useQuizStore = create<QuizStore>((set, get) => ({
   language: "en",
   status: "idle",
@@ -41,10 +32,6 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
   questions: [],
   currentIndex: 0,
   score: 0,
-  streak: 0,
-  bestStreak: 0,
-  multiplier: 1,
-  bestMultiplier: 1,
   answers: [],
   selectedAnswer: null,
   answered: false,
@@ -57,10 +44,6 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
       status: "playing",
       currentIndex: 0,
       score: 0,
-      streak: 0,
-      bestStreak: 0,
-      multiplier: 1,
-      bestMultiplier: 1,
       answers: [],
       selectedAnswer: null,
       answered: false,
@@ -74,17 +57,11 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
 
     const question = state.questions[state.currentIndex];
     const isCorrect = answer === question.correctAnswer;
-    const nextStreak = isCorrect ? state.streak + 1 : 0;
-    const nextMultiplier = calculateMultiplier(nextStreak);
-    const gained = isCorrect ? Math.round(10 * state.multiplier + Math.max(0, 8 - timeSpentSecond / 10)) : 0;
+    const gained = isCorrect ? 10 : 0;
 
     set({
       answered: true,
       selectedAnswer: answer,
-      streak: nextStreak,
-      bestStreak: Math.max(state.bestStreak, nextStreak),
-      multiplier: nextMultiplier,
-      bestMultiplier: Math.max(state.bestMultiplier, nextMultiplier),
       score: state.score + gained,
       answers: [
         ...state.answers,
@@ -123,10 +100,6 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
       questions: [],
       currentIndex: 0,
       score: 0,
-      streak: 0,
-      bestStreak: 0,
-      multiplier: 1,
-      bestMultiplier: 1,
       answers: [],
       selectedAnswer: null,
       answered: false,

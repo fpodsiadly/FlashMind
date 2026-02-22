@@ -30,24 +30,3 @@ export type QuestionAnswer = {
   isCorrect: boolean;
   timeSpentSecond: number;
 };
-
-export type QuizRoundPayload = {
-  language: Language;
-  score: number;
-  totalQuestions: number;
-  correctCount: number;
-  incorrectCount: number;
-  streakBest: number;
-  multiplierBest: number;
-  durationSeconds: number;
-  answers: QuestionAnswer[];
-};
-
-export type QuizRoundHistory = {
-  id: string;
-  language: string;
-  score: number;
-  correctCount: number;
-  incorrectCount: number;
-  createdAt: string;
-};

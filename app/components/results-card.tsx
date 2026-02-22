@@ -7,15 +7,11 @@ export function ResultsCard({
     score,
     correctCount,
     incorrectCount,
-    bestStreak,
-    bestMultiplier,
     onReset,
 }: {
     score: number;
     correctCount: number;
     incorrectCount: number;
-    bestStreak: number;
-    bestMultiplier: number;
     onReset: () => void;
 }) {
     return (
@@ -27,9 +23,6 @@ export function ResultsCard({
                 <p className="text-lg">Score: {score}</p>
                 <p>
                     Correct: {correctCount} | Wrong: {incorrectCount}
-                </p>
-                <p>
-                    Best streak: {bestStreak} | Best multiplier: x{bestMultiplier.toFixed(2)}
                 </p>
                 <Button className="w-full" onClick={onReset}>
                     Play Again
