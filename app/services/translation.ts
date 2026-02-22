@@ -28,7 +28,7 @@ function mockTranslate(text: string): string {
 async function openAiTranslate(text: string): Promise<string> {
   const key = process.env.OPENAI_API_KEY;
   if (!key) {
-    return mockTranslate(text);
+    return "";
   }
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -58,7 +58,31 @@ async function openAiTranslate(text: string): Promise<string> {
     choices?: Array<{ message?: { content?: string } }>;
   };
 
-  return data.choices?.[0]?.message?.content?.trim() || mockTranslate(text);
+  return data.choices?.[0]?.message?.content?.trim() || "";
+}
+
+async function fallbackWebTranslate(text: string): Promise<string> {
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pl&dt=t&q=${encodeURIComponent(text)}`;
+  const response = await fetch(url, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return "";
+  }
+
+  const data = (await response.json()) as unknown;
+  if (!Array.isArray(data) || !Array.isArray(data[0])) {
+    return "";
+  }
+
+  const segments = data[0] as unknown[];
+  const translated = segments
+    .map((segment) => (Array.isArray(segment) && typeof segment[0] === "string" ? segment[0] : ""))
+    .join("")
+    .trim();
+
+  return translated;
 }
 
 export async function translateText(text: string, targetLanguage: Language): Promise<string> {
@@ -74,7 +98,9 @@ export async function translateText(text: string, targetLanguage: Language): Pro
     return cached;
   }
 
-  const translatedText = await openAiTranslate(text);
+  const openAiResult = await openAiTranslate(text);
+  const webResult = openAiResult || (await fallbackWebTranslate(text));
+  const translatedText = webResult || mockTranslate(text);
 
   translationCache.set(cacheKey, translatedText);
 
