@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model QuizRound {
+  id              String       @id @default(cuid())
+  language        String
+  score           Int
+  totalQuestions  Int
+  correctCount    Int
+  incorrectCount  Int
+  streakBest      Int
+  multiplierBest  Float
+  durationSeconds Int
+  createdAt       DateTime     @default(now())
+  answers         QuizAnswer[]
+
+  @@index([createdAt])
+}
+
+model QuizAnswer {
+  id              String   @id @default(cuid())
+  roundId         String
+  questionIndex   Int
+  category        String
+  difficulty      String
+  question        String
+  selectedAnswer  String
+  correctAnswer   String
+  isCorrect       Boolean
+  timeSpentSecond Int
+  createdAt       DateTime @default(now())
+  round           QuizRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+
+  @@index([roundId])
+  @@index([category])
+}
+
+model TranslationCache {
+  id             String   @id @default(cuid())
+  sourceHash     String
+  sourceText     String
+  targetLang     String
+  translatedText String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([sourceHash, targetLang])
+  @@index([targetLang])
+}

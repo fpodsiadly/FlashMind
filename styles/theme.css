@@ -1,0 +1,9 @@
+:root {
+  --background: #05060f;
+  --foreground: #edf2ff;
+  --muted: #7e8ab8;
+  --border: rgba(110, 138, 255, 0.25);
+  --card: rgba(10, 13, 30, 0.82);
+  --success: #2ce7a4;
+  --danger: #ff4d94;
+}
