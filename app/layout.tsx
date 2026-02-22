@@ -4,21 +4,21 @@ import "@/styles/theme.css";
 import { Providers } from "@/app/components/providers";
 
 export const metadata: Metadata = {
-  title: "FlashMind",
-  description: "Adaptive quiz training with EN/PL support",
-  manifest: "/manifest.webmanifest",
+    title: "FlashMind",
+    description: "Adaptive quiz training with EN/PL support",
+    manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <Providers>{children}</Providers>
+            </body>
+        </html>
+    );
 }
